@@ -1,10 +1,10 @@
   name: CI/CD Pipeline
-  
+
   on:
     push:
       branches:
         - '*'
-  
+
   jobs:
     build:
       runs-on: ubuntu-latest
@@ -17,7 +17,7 @@
             distribution: 'adopt'
         - name: Build with Maven
           run: mvn clean package
-    
+
     deploy:
       needs: build
       runs-on: ubuntu-latest
@@ -27,6 +27,11 @@
             YC_SA_JSON_CREDENTIALS: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
             SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           run: |
+            
+            # Установка Yandex Cloud CLI
+            curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+            export PATH=$PATH:/home/runner/yandex-cloud/bin
+            
             echo "$YC_SA_JSON_CREDENTIALS" > yc-sa-key.json
             yc config set service-account-key yc-sa-key.json
             yc compute instance connect-to-serial-port --name your-instance-name --zone your-zone

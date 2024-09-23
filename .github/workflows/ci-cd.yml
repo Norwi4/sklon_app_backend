@@ -27,22 +27,9 @@
             YC_SA_JSON_CREDENTIALS: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
             SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           run: |
-            
-            # Установка Yandex Cloud CLI
-            curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
-            export PATH=$PATH:/home/runner/yandex-cloud/bin
-            
-            # Настройка Yandex Cloud CLI
             echo "$YC_SA_JSON_CREDENTIALS" > yc-sa-key.json
             yc config set service-account-key yc-sa-key.json
-            
-            # Настройка SSH
             echo "$SSH_PRIVATE_KEY" > ssh_key
             chmod 600 ssh_key
-            
-            # Копирование файла на сервер
-            scp -i ssh_key -o StrictHostKeyChecking=no target/sklon-web-0.0.1-SNAPSHOT.jar eabaev@51.250.101.151:/home/ubuntu/myapp/
-            
-            # Опционально: выполнение команд на удаленном сервере
-            ssh -i ssh_key -o StrictHostKeyChecking=no eabaev@51.250.101.151 "cd /home/ubuntu/myapp && java -jar sklon-web-0.0.1-SNAPSHOT.jar"
-          shell: /usr/bin/bash -e {0}
+            scp -i ssh_key target/sklon-web-0.0.1-SNAPSHOT.jar eabaev@51.250.101.151:/home/ubuntu/myapp/
+            ssh -i ssh_key eabaev@51.250.101.151 'sudo java -jar /home/ubuntu/myapp/sklon-web-0.0.1-SNAPSHOT.jar &'

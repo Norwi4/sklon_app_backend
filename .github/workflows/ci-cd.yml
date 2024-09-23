@@ -32,9 +32,17 @@
             curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
             export PATH=$PATH:/home/runner/yandex-cloud/bin
             
+            # Настройка Yandex Cloud CLI
             echo "$YC_SA_JSON_CREDENTIALS" > yc-sa-key.json
             yc config set service-account-key yc-sa-key.json
-            yc compute instance connect-to-serial-port --name your-instance-name --zone your-zone
+            
+            # Настройка SSH
             echo "$SSH_PRIVATE_KEY" > ssh_key
             chmod 600 ssh_key
-            scp -i ssh_key target/sklon-web-0.0.1-SNAPSHOT.jar deckhouse@51.250.100.141:/home/ubuntu/myapp/
+            
+            # Копирование файла на сервер
+            scp -i ssh_key -o StrictHostKeyChecking=no target/sklon-web-0.0.1-SNAPSHOT.jar deckhouse@51.250.100.141:/home/ubuntu/myapp/
+            
+            # Опционально: выполнение команд на удаленном сервере
+            ssh -i ssh_key -o StrictHostKeyChecking=no deckhouse@51.250.100.141 "cd /home/ubuntu/myapp && java -jar sklon-web-0.0.1-SNAPSHOT.jar"
+          shell: /usr/bin/bash -e {0}

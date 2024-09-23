@@ -22,6 +22,7 @@
       needs: build
       runs-on: ubuntu-latest
       steps:
+        - uses: actions/checkout@v2
         - name: Deploy to Yandex Cloud
           env:
             YC_SA_JSON_CREDENTIALS: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
@@ -29,7 +30,7 @@
           run: |
             # Установка Yandex Cloud CLI
             curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
-            export PATH=$PATH:/home/runner/yandex-cloud/bin
+            export PATH=$PATH:$HOME/yandex-cloud/bin
 
             echo "$YC_SA_JSON_CREDENTIALS" > yc-sa-key.json
             yc config set service-account-key yc-sa-key.json
@@ -44,6 +45,20 @@
             # Отладочная информация
             ls -la ~/.ssh
             cat ~/.ssh/known_hosts
+
+            # Проверка содержимого ключа
+            echo "First line of SSH key:"
+            head -n 1 ssh_key
+            echo "File permissions:"
+            ls -l ssh_key
+
+            # Дополнительная отладочная информация
+            echo "Current directory:"
+            pwd
+            echo "SSH key location:"
+            ls -l ssh_key
+            echo "SSH config:"
+            cat /etc/ssh/ssh_config
 
             # Попытка SSH-подключения с подробным выводом
             ssh -v -i ssh_key eabaev@51.250.101.151 'echo "SSH connection successful"'

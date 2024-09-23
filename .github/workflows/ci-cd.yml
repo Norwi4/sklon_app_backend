@@ -1,0 +1,35 @@
+  name: CI/CD Pipeline
+  
+  on:
+    push:
+      branches:
+        - '*'
+  
+  jobs:
+    build:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - name: Set up JDK 11
+          uses: actions/setup-java@v2
+          with:
+            java-version: '11'
+            distribution: 'adopt'
+        - name: Build with Maven
+          run: mvn clean package
+    
+    deploy:
+      needs: build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Deploy to Yandex Cloud
+          env:
+            YC_SA_JSON_CREDENTIALS: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+            SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          run: |
+            echo "$YC_SA_JSON_CREDENTIALS" > yc-sa-key.json
+            yc config set service-account-key yc-sa-key.json
+            yc compute instance connect-to-serial-port --name your-instance-name --zone your-zone
+            echo "$SSH_PRIVATE_KEY" > ssh_key
+            chmod 600 ssh_key
+            scp -i ssh_key target/sklon-web-0.0.1-SNAPSHOT.jar deckhouse@51.250.100.141:/home/ubuntu/myapp/

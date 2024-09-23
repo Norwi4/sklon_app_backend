@@ -44,5 +44,5 @@
             scp -i ssh_key -o StrictHostKeyChecking=no target/sklon-web-0.0.1-SNAPSHOT.jar deckhouse@51.250.100.141:/home/ubuntu/myapp/
             
             # Опционально: выполнение команд на удаленном сервере
-            ssh -i ssh_key -o StrictHostKeyChecking=no deckhouse@51.250.100.141 "cd /home/ubuntu/myapp && java -jar sklon-web-0.0.1-SNAPSHOT.jar"
+            ssh -i ssh_key -o StrictHostKeyChecking=no eabaev@51.250.101.151 "cd /home/ubuntu/myapp && java -jar sklon-web-0.0.1-SNAPSHOT.jar"
           shell: /usr/bin/bash -e {0}

@@ -46,7 +46,7 @@
             cat ~/.ssh/known_hosts
 
             # Попытка SSH-подключения с подробным выводом
-            ssh -v -i ssh-rsa ssh_key 'echo "SSH connection successful"'
+            ssh -v -i ssh_key eabaev@51.250.101.151 'echo "SSH connection successful"'
 
             # Копирование и запуск приложения
             scp -i ssh_key target/sklon-web-0.0.1-SNAPSHOT.jar eabaev@51.250.101.151:/home/ubuntu/myapp/

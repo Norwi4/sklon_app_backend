@@ -75,6 +75,8 @@
     </dependencies>
 
     <build>
+<!--        <sourceDirectory>src/main/kotlin</sourceDirectory>-->
+<!--        <testSourceDirectory>src/test/java</testSourceDirectory>-->
         <plugins>
             <plugin>
                 <groupId>org.jooq</groupId>
@@ -122,11 +124,11 @@
                 </property>
             </activation>
             <properties>
-                <DB_HOST>localhost</DB_HOST>
+                <DB_HOST>rc1d-c75tce3acct1by6g.mdb.yandexcloud.net</DB_HOST>
                 <DB_PORT>3306</DB_PORT>
                 <DB_DATABASE>sklon_db</DB_DATABASE>
-                <DB_USERNAME>root</DB_USERNAME>
-                <DB_PASSWORD>root</DB_PASSWORD>
+                <DB_USERNAME>evgen1234</DB_USERNAME>
+                <DB_PASSWORD>evgen1234</DB_PASSWORD>
             </properties>
         </profile>
     </profiles>

@@ -24,6 +24,7 @@
         <module>sklon-web</module>
         <module>sklon-jooq</module>
         <module>sklon-api</module>
+        <module>sklon-core</module>
     </modules>
 
     <properties>

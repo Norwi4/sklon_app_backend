@@ -62,8 +62,8 @@ jobs:
           # Добавление известного хоста
           mkdir -p ~/.ssh
           ssh-keyscan -H 51.250.101.151 >> ~/.ssh/known_hosts
-          
-          # Удаление старого приложение
+
+          # Остановка и удаление старого приложения (если оно запущено)
           ssh -i ssh_key eabaev@51.250.101.151 << 'EOF'
             if pgrep -f "sklon-web-0.0.1-SNAPSHOT.jar" > /dev/null; then
               echo "Stopping the old application..."
@@ -73,7 +73,7 @@ jobs:
             echo "Removing old application..."
             sudo rm -rf /home/eabaev/myapp/sklon-web-0.0.1-SNAPSHOT.jar || true  # Удаление старого JAR файла, если он есть
           EOF
-          
-          # Копирование и запуск приложения
+
+          # Копирование нового приложения и запуск его в фоновом режиме
           scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar eabaev@51.250.101.151:/home/eabaev/myapp/
           ssh -i ssh_key eabaev@51.250.101.151 'sudo java -jar /home/eabaev/myapp/sklon-web-0.0.1-SNAPSHOT.jar &'

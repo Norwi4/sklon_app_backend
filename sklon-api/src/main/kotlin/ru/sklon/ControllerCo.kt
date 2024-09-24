@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*
  */
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping()
 internal class ControllerCo(
     private val ser: ServiceCo
 ) {
@@ -20,4 +20,7 @@ internal class ControllerCo(
     fun update(@RequestBody coach: CoachDto) {
         ser.update(coach)
     }
+
+    @GetMapping("get-equipments")
+    fun getModels(): List<Model> = listOf(Model(1, "asdf", "asf"), Model(2, "asdas", "asdasd"))
 }

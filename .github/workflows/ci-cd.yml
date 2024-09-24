@@ -74,7 +74,7 @@ jobs:
             ssh -v -i ssh_key eabaev@51.250.101.151 'echo "SSH connection successful"'
 
             # Копирование и запуск приложения
-            scp -i ssh_key ./sklon_app/sklon-web/target/sklon-web-0.0.1-SNAPSHOT.jar eabaev@51.250.101.151:/home/eabaev/myapp/
+            scp -i ssh_key ../sklon_app/sklon-web/target/sklon-web-0.0.1-SNAPSHOT.jar eabaev@51.250.101.151:/home/eabaev/myapp/
             ssh -i ssh_key eabaev@51.250.101.151 'sudo java -jar /home/eabaev/myapp/sklon-web-0.0.1-SNAPSHOT.jar &'
 
       - name: Cleanup

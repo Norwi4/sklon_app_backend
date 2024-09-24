@@ -47,8 +47,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ssh_key
           chmod 600 ssh_key
           
-          ssh -i ssh_key eabaev@51.250.101.151 'sudo pkill -f sklon-web-0.0.1-SNAPSHOT.jar'
-          ssh -i ssh_key eabaev@51.250.101.151 'sudo rm -f /home/eabaev/myapp/sklon-web-0.0.1-SNAPSHOT.jar'
+          ssh -i ssh_key eabaev@51.250.101.151 'sudo kill $(lsof -t -i:8080)'
 
       - name: Deploy to VPS
         env:

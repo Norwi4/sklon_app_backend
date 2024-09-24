@@ -65,6 +65,7 @@ jobs:
 
           # Остановка и удаление старого приложения (если оно запущено)
           ssh -i ssh_key eabaev@51.250.101.151 << 'EOF'
+            sudo -i
             # Проверяем, есть ли процессы на порту 8080
             PIDS=$(sudo lsof -t -iTCP:8080 -sTCP:LISTEN)
             if [ -n "$PIDS" ]; then

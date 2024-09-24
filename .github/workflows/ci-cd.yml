@@ -6,73 +6,38 @@ on:
       - '*'
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
-
+      - uses: actions/checkout@v2
       - name: Set up JDK 11
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v2
         with:
           java-version: '11'
           distribution: 'adopt'
-          cache: maven
-
       - name: Build with Maven
         run: mvn clean install
 
-      - name: Check current directory and list files
-        run: |
-          pwd
-          ls -R
-          find . -name "*.jar"
-
-      - name: Deploy to VPS
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy to Yandex Cloud
         env:
           YC_SA_JSON_CREDENTIALS: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-
         run: |
-          # Установка Yandex Cloud CLI
-          curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
-          export PATH=$PATH:$HOME/yandex-cloud/bin
-
+          
           echo "$YC_SA_JSON_CREDENTIALS" > yc-sa-key.json
           yc config set service-account-key yc-sa-key.json
-
+          
           echo "$SSH_PRIVATE_KEY" > ssh_key
-          chmod 600 ssh_key
-
-          # Добавление известного хоста
-          mkdir -p ~/.ssh
-          ssh-keyscan -H 51.250.101.151 >> ~/.ssh/known_hosts
-
-          # Отладочная информация
-          ls -la ~/.ssh
-          cat ~/.ssh/known_hosts
-
-          # Проверка содержимого ключа
-          echo "First line of SSH key:"
-          head -n 1 ssh_key
-          echo "File permissions:"
-          ls -l ssh_key
-
-          # Дополнительная отладочная информация
-          echo "Current directory:"
-          pwd
-          echo "SSH key location:"
-          ls -l ssh_key
-          echo "SSH config:"
-          cat /etc/ssh/ssh_config
+          chmod 600 ssh_key 
 
           # Попытка SSH-подключения с подробным выводом
           ssh -v -i ssh_key eabaev@51.250.101.151 'echo "SSH connection successful"'
-
+          
           # Копирование и запуск приложения
           scp -i ssh_key ./sklon-web/target/sklon-web-0.0.1-SNAPSHOT.jar eabaev@51.250.101.151:/home/eabaev/myapp/
           ssh -i ssh_key eabaev@51.250.101.151 'sudo java -jar /home/eabaev/myapp/sklon-web-0.0.1-SNAPSHOT.jar &'
-
-      - name: Cleanup
-        if: always()
-        run: rm -f ssh_key yc-sa-key.json

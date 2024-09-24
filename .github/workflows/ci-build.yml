@@ -64,7 +64,7 @@ jobs:
           ssh-keyscan -H 51.250.101.151 >> ~/.ssh/known_hosts
           
           # Удаление старого приложение
-          ssh -i ssh_key eabaev@51.250.101.151 'sudo kill $(lsof -t -i:8080)'
+          ssh -i ssh_key eabaev@51.250.101.151 'sudo kill -9 $(lsof -t -i:8080)'
           
           # Копирование и запуск приложения
           scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar eabaev@51.250.101.151:/home/eabaev/myapp/

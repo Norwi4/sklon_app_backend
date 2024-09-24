@@ -86,8 +86,8 @@ jobs:
           sleep 10  # Ждем некоторое время, чтобы приложение успело запуститься
 
 
-          for i in {1..10}; do  # Проверяем 10 раз с интервалом в 5 секунд
-            if curl --silent --fail http://51.250.101.151:8080/actuator/health; then 
+          for i in {1..2}; do  # Проверяем 10 раз с интервалом в 5 секунд
+            if curl --silent --fail http://51.250.101.151:8080/objects; then 
               echo "Application is up and running!"
               exit 0  # Успех, завершаем выполнение скрипта с кодом 0
             fi

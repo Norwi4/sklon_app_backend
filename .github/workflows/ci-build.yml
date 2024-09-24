@@ -65,7 +65,8 @@ jobs:
 
           # Остановка и удаление старого приложения (если оно запущено)
           ssh -i ssh_key eabaev@51.250.101.151 << 'EOF'
-            
+
+
             echo "Stopping the old application..."
             kill $(lsof -ti tcp:8080) || true  # Остановка процесса на порту 8080, если он есть
             

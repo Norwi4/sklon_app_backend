@@ -81,7 +81,7 @@ jobs:
 
           # Копирование нового приложения и запуск его в фоновом режиме
           scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar eabaev@51.250.101.151:/home/eabaev/myapp/
-          ssh -i ssh_key eabaev@51.250.101.151 'sudo nohup java -jar /home/eabaev/myapp/sklon-web-0.0.1-SNAPSHOT.jar &'
+          ssh -i ssh_key eabaev@51.250.101.151 'sudo nohup java -jar /home/eabaev/myapp/sklon-web-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &'
 
           sleep 10  # Ждем некоторое время, чтобы приложение успело запуститься
 

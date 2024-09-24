@@ -22,5 +22,5 @@ internal class ControllerCo(
     }
 
     @GetMapping("get-equipments")
-    fun getModels(): List<Model> = listOf(Model(1, "тест1.3", "asf"), Model(2, "asdas", "asdasd"))
+    fun getModels(): List<Model> = listOf(Model(1, "тест1.4", "asf"), Model(2, "asdas", "asdasd"))
 }

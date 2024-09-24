@@ -65,10 +65,10 @@ jobs:
 
           # Остановка и удаление старого приложения (если оно запущено)
           ssh -i ssh_key eabaev@51.250.101.151 << 'EOF'
-            if lsof -ti tcp:8080; then
-              echo "Stopping the old application..."
-              kill $(lsof -ti tcp:8080) || true  # Остановка процесса на порту 8080, если он есть
-            fi
+            
+            echo "Stopping the old application..."
+            kill $(lsof -ti tcp:8080) || true  # Остановка процесса на порту 8080, если он есть
+            
           
             echo "Removing old application..."
             sudo rm -rf /home/eabaev/myapp/sklon-web-0.0.1-SNAPSHOT.jar || true  # Удаление старого JAR файла, если он есть

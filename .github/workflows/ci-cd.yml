@@ -32,7 +32,7 @@ jobs:
 
       - name: Check if JAR file exists
         run: |
-          if [ -f "sklon_app/sklon-web/target/sklon-web-0.0.1-SNAPSHOT.jar" ]; then
+          if [ -f "./sklon_app/sklon-web/target/sklon-web-0.0.1-SNAPSHOT.jar" ]; then
             echo "JAR file exists"
           else
             echo "JAR file does not exist"

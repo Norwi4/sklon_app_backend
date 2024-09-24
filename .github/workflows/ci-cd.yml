@@ -40,7 +40,9 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ssh_key
           chmod 600 ssh_key
           
-          
+          # Добавление известного хоста
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 51.250.101.151 >> ~/.ssh/known_hosts
           
           
           

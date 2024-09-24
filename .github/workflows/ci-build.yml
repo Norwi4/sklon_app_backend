@@ -1,5 +1,3 @@
-name: CI/CD Pipeline
-
 on:
   push:
     branches:
@@ -29,7 +27,6 @@ jobs:
         with:
           name: package
           path: sklon-web/target/sklon-web-0.0.1-SNAPSHOT.jar
-
   deploy:
     needs: build
     if: github.ref == 'refs/heads/master'
@@ -42,6 +39,16 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: package
+
+      - name: Stop and remove previous application
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > ssh_key
+          chmod 600 ssh_key
+          
+          ssh -i ssh_key eabaev@51.250.101.151 'sudo pkill -f sklon-web-0.0.1-SNAPSHOT.jar'
+          ssh -i ssh_key eabaev@51.250.101.151 'sudo rm -f /home/eabaev/myapp/sklon-web-0.0.1-SNAPSHOT.jar'
 
       - name: Deploy to VPS
         env:

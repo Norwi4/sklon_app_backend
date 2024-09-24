@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 import ru.sklon.jooq.domain.sklon_db.tables.Users.USERS
 
 /**
- * iuyf i
+ * iuyf iljhvklhj
  * @author Abaev Evgeniy
  */
 @Component

@@ -6,7 +6,8 @@ on:
       - '*'
 
 jobs:
-  build-and-deploy:
+
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,6 +23,24 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: package
+          path: sklon-web/target/sklon-web-0.0.1-SNAPSHOT.jar
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: package
+
       - name: Deploy to VPS
         env:
           YC_SA_JSON_CREDENTIALS: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
@@ -31,17 +50,17 @@ jobs:
           # Установка Yandex Cloud CLI
           curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
           export PATH=$PATH:$HOME/yandex-cloud/bin
-
+          
           echo "$YC_SA_JSON_CREDENTIALS" > yc-sa-key.json
           yc config set service-account-key yc-sa-key.json
-
+          
           echo "$SSH_PRIVATE_KEY" > ssh_key
           chmod 600 ssh_key
-
+          
           # Добавление известного хоста
           mkdir -p ~/.ssh
           ssh-keyscan -H 51.250.101.151 >> ~/.ssh/known_hosts
-
+          
           # Копирование и запуск приложения
-          scp -i ssh_key ./sklon-web/target/sklon-web-0.0.1-SNAPSHOT.jar eabaev@51.250.101.151:/home/eabaev/myapp/
+          scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar eabaev@51.250.101.151:/home/eabaev/myapp/
           ssh -i ssh_key eabaev@51.250.101.151 'sudo java -jar /home/eabaev/myapp/sklon-web-0.0.1-SNAPSHOT.jar &'

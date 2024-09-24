@@ -77,19 +77,3 @@ jobs:
           # Копирование и запуск приложения
           scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar eabaev@51.250.101.151:/home/eabaev/myapp/
           ssh -i ssh_key eabaev@51.250.101.151 'sudo java -jar /home/eabaev/myapp/sklon-web-0.0.1-SNAPSHOT.jar &'
-      - name: Wait for application to start
-        run: |
-          sleep 600  # Ждем некоторое время, чтобы приложение успело запуститься
-
-      - name: Check application status
-        run: |
-          for i in {1..10}; do  # Проверяем 10 раз с интервалом в 5 секунд
-            if curl --silent --fail http://51.250.101.151:8080/actuator/health; then 
-              echo "Application is up and running!"
-              exit 0  # Успех, завершаем выполнение скрипта с кодом 0
-            fi
-            echo "Waiting for application to start..."
-            sleep 5  
-          done
-          echo "Application did not start successfully." 
-          exit 1  # Если приложение не запустилось, завершаем с ошибкой

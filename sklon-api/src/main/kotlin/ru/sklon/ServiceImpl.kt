@@ -17,4 +17,12 @@ internal class ServiceImpl(
     override fun update(coach: CoachDto) {
         rep.update(coach)
     }
+
+    override fun listClient(): List<Clients> {
+        return rep.listClient()
+    }
+
+    override fun updateClients(clients: ClientsDto) {
+        rep.updateClients(clients)
+    }
 }

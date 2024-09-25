@@ -7,3 +7,6 @@ spring:
     username: evgen1234
     password: evgen1234
     driver-class-name: com.mysql.jdbc.Driver
+
+  liquibase:
+    change-log: classpath:db.changelog/app-changelog.xml

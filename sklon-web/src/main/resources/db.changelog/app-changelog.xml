@@ -5,5 +5,25 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <include file="/scripts/v1_create_clients_table.sql" relativeToChangelogFile="true"/>
+    <!--  КАТЕГОРИИ -->
+    <include file="scripts/categories/v1_create_categories_age_table.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/categories/v2_create_categories_gender_table.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/categories/v3_create_categories_prof_table.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/categories/v4_create_categories_sport_table.sql" relativeToChangelogFile="true"/>
+
+
+    <!--  ЛЮДИ -->
+    <include file="scripts/client/v2_create_client_table.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/client/v1_create_client_profile_table.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/client/v3_create_auth_history_table.sql" relativeToChangelogFile="true"/>
+
+    <!--  СКЛАД -->
+    <include file="scripts/warehouse/v1_create_product_table.sql" relativeToChangelogFile="true"/>
+
+    <!--  ЗАКАЗЫ -->
+    <include file="scripts/order/v1_create_order_table.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/order/v2_create_order_item_table.sql" relativeToChangelogFile="true"/>
+
+
+
 </databaseChangeLog>

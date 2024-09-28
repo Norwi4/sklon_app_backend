@@ -3,10 +3,11 @@ spring:
     init:
       mode: always
   datasource:
-    url: jdbc:mysql://rc1d-c75tce3acct1by6g.mdb.yandexcloud.net:3306/sklon_db
-    username: evgen1234
-    password: evgen1234
-    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:postgresql://localhost:5432/sklon
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
 
   liquibase:
     change-log: classpath:db.changelog/app-changelog.xml
+    default-schema: sklon_liquibase

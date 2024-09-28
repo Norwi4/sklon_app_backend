@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sklon-web</artifactId>
+    <artifactId>sklon-auth</artifactId>
 
     <dependencies>
         <dependency>
@@ -19,43 +19,25 @@
         </dependency>
 
         <dependency>
-            <groupId>ru.sklon</groupId>
-            <artifactId>sklon-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ru.sklon</groupId>
-            <artifactId>sklon-auth</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.8.0</version>
+        </dependency>
 
     </dependencies>
-
-    <build>
-        <!--        <sourceDirectory>src/main/kotlin</sourceDirectory>
-                <testSourceDirectory>src/test/kotlin</testSourceDirectory>-->
-
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <executable>true</executable>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

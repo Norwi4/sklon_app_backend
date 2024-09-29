@@ -4,7 +4,9 @@ import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
 import ru.sklon.dao.mapper.ClientRowMapper
 import ru.sklon.jooq.domain.sklon_auth.tables.Client.CLIENT
+import ru.sklon.jooq.domain.sklon_rent.tables.ClientProfile
 import ru.sklon.model.ClientDto
+import java.util.*
 
 @Repository
 internal class ClientRepositoryImpl(
@@ -36,6 +38,29 @@ internal class ClientRepositoryImpl(
             .where(CLIENT.PHONE.eq(phone))
             .and(CLIENT.CODE.eq(code))
             .fetchOne(mapper)!!
+    }
+
+    override fun updateUserCode(phone: String, code: String) {
+        dsl.update(CLIENT)
+            .set(CLIENT.CODE, code)
+            .where(CLIENT.PHONE.eq(phone))
+            .returningResult(CLIENT.ID)
+            .execute()
+    }
+
+    override fun createUser(phone: String, code: String): UUID {
+        return dsl.insertInto(CLIENT)
+            .set(CLIENT.PHONE, phone)
+            .set(CLIENT.CODE, code)
+            .returningResult(CLIENT.ID)
+            .fetchOne()?.value1()!!
+    }
+
+    override fun createUserProfile(clientId: UUID) {
+        dsl.insertInto(ClientProfile.CLIENT_PROFILE)
+            .set(ClientProfile.CLIENT_PROFILE.CLIENT_ID, clientId)
+            .returningResult(ClientProfile.CLIENT_PROFILE.ID)
+            .execute()
     }
 
     /**

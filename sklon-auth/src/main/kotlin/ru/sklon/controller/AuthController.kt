@@ -1,17 +1,11 @@
 package ru.sklon.controller
 
-import dev.samstevens.totp.code.CodeGenerator
-import dev.samstevens.totp.code.DefaultCodeGenerator
-import dev.samstevens.totp.code.HashingAlgorithm
 import org.jooq.DSLContext
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
-import ru.sklon.dao.ClientRepository
-import ru.sklon.jooq.domain.sklon_auth.tables.Client.CLIENT
-import ru.sklon.model.ClientDto
-import ru.sklon.model.Phone
+import ru.sklon.model.PhoneRequest
 import ru.sklon.service.ClientService
 import ru.sklon.utils.JwtUtil
 import ru.sklon.vo.ClientVo
@@ -32,9 +26,7 @@ import kotlin.random.Random
 @RestController
 @RequestMapping()
 internal class AuthController(
-    private val dsl: DSLContext,
     private val service: ClientService,
-    private val repository: ClientRepository,
     private val jwtUtil: JwtUtil
 ) {
 
@@ -44,55 +36,38 @@ internal class AuthController(
     }
 
     /**
-     * Полу
+     * Получить одноразовый код по смс
      */
     @PostMapping("/signup")
-    fun signin(@RequestBody phone: Phone): ResponseEntity<JwtResponse> {
-
-        val code = Random.nextInt(1000, 10000).toString()
-
-        // проверяем существует ли уже аккаунт с таким номером
-        if (service.existUser(phone.phoneNumber)) {
-            // обновляем проверочный код в найденом аккаунте
-
-            dsl.update(CLIENT)
-                .set(CLIENT.CODE, code)
-                .where(CLIENT.PHONE.eq(phone.phoneNumber))
-                .returningResult(CLIENT.ID)
-                .execute()
-
-            // а так же в таблице истории авторизаций
-
-        } else {
-            // нужно создать запись в таблице клиент
-            // так же профиль клиента
-            // а так же в таблице истории авторизаций
-            dsl.insertInto(CLIENT)
-                .set(CLIENT.PHONE, phone.phoneNumber)
-                .set(CLIENT.CODE, code)
-                .returningResult(CLIENT.ID)
-                .execute()
-        }
-
-
-
+    fun signin(@RequestBody phoneRequest: PhoneRequest): ResponseEntity<JwtResponse> {
+        service.createOrUpdateUser(phoneRequest.phone)
         return ResponseEntity<JwtResponse>(HttpStatus.OK)
     }
 
+    /**
+     * Авторизация по номеру и одноразовому коду
+     */
     @PostMapping("/signin")
     fun signup(@RequestBody request: JwtRequest): ResponseEntity<JwtResponse> {
-
         val userDetails: UserDetails = service.loadUserByUsername(request.phone, request.code)
-        //val user: ClientDto = repository.getUserByPhoneAndCode(userDetails.username, userDetails.password)
-        val client = ClientVo(userDetails.username, userDetails.password)
-
-        return ResponseEntity<JwtResponse>(JwtResponse(jwtUtil.generateToken(client)), HttpStatus.OK)
+        return ResponseEntity<JwtResponse>(
+            JwtResponse(
+                jwtUtil.generateToken(
+                    ClientVo(
+                        userDetails.username,
+                        userDetails.password
+                    )
+                )
+            ),
+            HttpStatus.OK
+        )
     }
 
 
 
     /**
      * Отправка смс с кодом на указанный номер
+     * ТЕСТОВЫЙ МЕТОД
      */
     fun sendCodeInMessage(phone: String, code: String) {
         val request: HttpRequest = HttpRequest.newBuilder()

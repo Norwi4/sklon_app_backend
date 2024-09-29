@@ -11,6 +11,7 @@ import ru.sklon.dao.ClientRepository
 import ru.sklon.jooq.domain.sklon_auth.tables.Client.CLIENT
 import ru.sklon.model.ClientDto
 import java.util.*
+import kotlin.random.Random
 
 @Service
 internal class ClientServiceImpl(
@@ -37,8 +38,14 @@ internal class ClientServiceImpl(
         return User(client.phone, client.code, listOf())
     }
 
-    override fun getUserByUserPhone(): UserDetails {
-        TODO("Not yet implemented")
+    override fun createOrUpdateUser(phone: String) {
+        val code = Random.nextInt(1000, 10000).toString()
+        if (repository.existUser(phone)) {
+            repository.updateUserCode(phone, code)
+        } else {
+            val clientId = repository.createUser(phone, code)
+            repository.createUserProfile(clientId)
+        }
     }
 
     override fun saveUser(client: ClientDto) {

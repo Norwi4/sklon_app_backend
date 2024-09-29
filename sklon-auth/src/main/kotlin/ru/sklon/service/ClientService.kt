@@ -15,9 +15,19 @@ internal interface ClientService:  UserDetailsService {
      */
     fun existUser(phone: String): Boolean
 
-    fun getUserByUserPhone(): UserDetails
-
+    /**
+     * Получить пользователя по номеру и коду
+     */
     fun loadUserByUsername(phone: String, code: String): UserDetails
 
+    /**
+     * Создать нового пользователя и его профиль если такого не существует
+     * или обновить код текущего пользователя
+     */
+    fun createOrUpdateUser(phone: String)
+
+    /**
+     * Сохранение нового пользователя
+     */
     fun saveUser(client: ClientDto)
 }

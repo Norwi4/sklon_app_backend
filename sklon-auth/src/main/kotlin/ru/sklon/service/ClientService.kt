@@ -17,5 +17,7 @@ internal interface ClientService:  UserDetailsService {
 
     fun getUserByUserPhone(): UserDetails
 
+    fun loadUserByUsername(phone: String, code: String): UserDetails
+
     fun saveUser(client: ClientDto)
 }

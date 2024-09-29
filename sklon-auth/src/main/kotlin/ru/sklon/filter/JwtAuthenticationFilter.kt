@@ -10,6 +10,7 @@ import ru.sklon.exception.JwtTokenMissingException
 import ru.sklon.model.ClientDto
 import ru.sklon.service.ClientService
 import ru.sklon.utils.JwtUtil
+import ru.sklon.vo.ClientVo
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -37,20 +38,16 @@ internal class JwtAuthenticationFilter(
         val token: String = header.substring(7)
         jwtUtils.validateToken(token)
 
-        val user: ClientDto? = jwtUtils.getUser(token)
+        val user: ClientVo? = jwtUtils.getUser(token)
 
-        val userDetails: UserDetails = service.loadUserByUsername(user!!.phone)
+        val userDetails: UserDetails = service.loadUserByUsername(user!!.phone, user.code)
 
-        val usernamePasswordAuthenticationToken: UsernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
+        val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
         usernamePasswordAuthenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request)
 
         if (SecurityContextHolder.getContext().authentication == null) {
             SecurityContextHolder.getContext().authentication = usernamePasswordAuthenticationToken
         }
         filterChain.doFilter(request, response)
-
     }
-
-
-
 }

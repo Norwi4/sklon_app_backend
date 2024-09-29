@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component
 import ru.sklon.exception.JwtTokenMalformedException
 import ru.sklon.exception.JwtTokenMissingException
 import ru.sklon.model.ClientDto
+import ru.sklon.vo.ClientVo
 import java.lang.Exception
 import java.security.SignatureException
 import java.util.*
@@ -21,10 +22,10 @@ internal class JwtUtil {
     private lateinit var jwtSecret: String
 
 
-    fun getUser(token: String): ClientDto? {
+    fun getUser(token: String): ClientVo? {
         return try {
             val body: Claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).body
-            val user = ClientDto(UUID.fromString("b7c4da57-ddcc-43fd-a24c-5e86611cfcc8"), body.subject, "100", "sdfsdfg")
+            val user = ClientVo(body.subject, body["code"].toString())
             return user
         } catch (e: Exception) {
             System.out.println(e.message + " => " + e)
@@ -33,8 +34,9 @@ internal class JwtUtil {
 
     }
 
-    fun generateToken(client: ClientDto): String {
+    fun generateToken(client: ClientVo): String {
         val claims: Claims = Jwts.claims().setSubject(client.phone)
+        claims.put("code", client.code)
         val nowMillis: Long = System.currentTimeMillis()
         return Jwts.builder()
             .setClaims(claims)

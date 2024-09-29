@@ -18,8 +18,10 @@ internal interface ClientRepository {
      */
     fun getUser(phone: String): ClientDto
 
+    fun getUserByPhoneAndCode(phone: String, code: String): ClientDto
+
     /**
      * Сохранить клиента
      */
-    fun saveUser(client: ClientDto): ClientDto
+    fun saveUser(client: ClientDto)
 }

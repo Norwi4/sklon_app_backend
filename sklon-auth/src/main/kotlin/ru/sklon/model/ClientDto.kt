@@ -9,6 +9,5 @@ import java.util.*
 data class ClientDto(
     val id: UUID,
     val phone: String,
-    val code: String,
-    val token: String
+    val code: String
 )

@@ -2,8 +2,8 @@
 --changeSet runOnChange:true splitStatements:false
 
 -- Профиль клиента
-DROP TABLE IF EXISTS sklon_rent.clients_profiles;
-CREATE TABLE sklon_rent.clients_profiles
+DROP TABLE IF EXISTS sklon_rent.client_profile;
+CREATE TABLE sklon_rent.client_profile
 (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     firstname VARCHAR(50),          -- имя
@@ -13,5 +13,5 @@ CREATE TABLE sklon_rent.clients_profiles
     home_house VARCHAR(100),        -- дом
     home_apartment VARCHAR(100),    -- квартира
     client_id uuid UNIQUE NOT NULL, -- ссылка на мета информацию
-    FOREIGN KEY (client_id) REFERENCES sklon_auth.clients (id) ON DELETE CASCADE
+    FOREIGN KEY (client_id) REFERENCES sklon_auth.client (id) ON DELETE CASCADE
 );

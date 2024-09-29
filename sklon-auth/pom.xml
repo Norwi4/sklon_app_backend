@@ -38,6 +38,13 @@
             <version>0.8.0</version>
         </dependency>
 
+        <!-- для генерации кода для смс -->
+        <dependency>
+            <groupId>dev.samstevens.totp</groupId>
+            <artifactId>totp</artifactId>
+            <version>1.7.1</version>
+        </dependency>
+
     </dependencies>
 
 </project>

@@ -1,16 +1,20 @@
 package ru.sklon.controller
 
+import dev.samstevens.totp.code.CodeGenerator
+import dev.samstevens.totp.code.DefaultCodeGenerator
+import dev.samstevens.totp.code.HashingAlgorithm
 import org.jooq.DSLContext
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 import ru.sklon.dao.ClientRepository
-import ru.sklon.jooq.domain.sklon_auth.tables.Clients.CLIENTS
+import ru.sklon.jooq.domain.sklon_auth.tables.Client.CLIENT
 import ru.sklon.model.ClientDto
 import ru.sklon.model.Phone
 import ru.sklon.service.ClientService
 import ru.sklon.utils.JwtUtil
+import ru.sklon.vo.ClientVo
 import ru.sklon.vo.JwtRequest
 import ru.sklon.vo.JwtResponse
 import java.net.URI
@@ -18,6 +22,7 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.util.*
+import kotlin.random.Random
 
 /**
  *
@@ -38,53 +43,69 @@ internal class AuthController(
         return "Все работает"
     }
 
+    /**
+     * Полу
+     */
     @PostMapping("/signup")
-    fun signup(@RequestBody request: JwtRequest): ResponseEntity<JwtResponse> {
-        // получаем номер, делаем запрос на получение смс, находим в базе sklon_auth.clients профиль
-        // и перезаписываем код либо создаем новый, так же создаем профиль клиента в sklon_rent.clients_profiles
-        // и создаем, если его нет
+    fun signin(@RequestBody phone: Phone): ResponseEntity<JwtResponse> {
 
-        val ex: Int = dsl.selectOne()
-            .from(CLIENTS)
-            .where(CLIENTS.PHONE.eq(request.phone))
-            .fetchCount()
+        val code = Random.nextInt(1000, 10000).toString()
 
-        System.out.println(ex)
-        System.out.println("                     ")
-        System.out.println(request)
-        System.out.println("                     ")
+        // проверяем существует ли уже аккаунт с таким номером
+        if (service.existUser(phone.phoneNumber)) {
+            // обновляем проверочный код в найденом аккаунте
 
-//        val request: HttpRequest = HttpRequest.newBuilder()
-//            .GET()
-//            .uri(URI("https://email:api_key@gate.smsaero.ru/v2/sms/send?number=79056402045&text=1008&sign=SMSAero"))
-//            .header("accept", "application/json")
-//            .header("Authorization", getBasicAuthenticationHeader("abaevevgenchik@gmail.com", "qpMUFeQeec2FQJv-_rYzLAvR1lftEBM5"))
-//            .build()
-//
-//        val client: HttpClient = HttpClient.newHttpClient();
-//        val response: HttpResponse<String> = client.send(request, HttpResponse.BodyHandlers.ofString())
-//
-//        System.out.println(response)
+            dsl.update(CLIENT)
+                .set(CLIENT.CODE, code)
+                .where(CLIENT.PHONE.eq(phone.phoneNumber))
+                .returningResult(CLIENT.ID)
+                .execute()
 
+            // а так же в таблице истории авторизаций
 
-        System.out.println("")
-        System.out.println("")
-        System.out.println("")
-        System.out.println("токен")
-
-        val userDetails: UserDetails = service.loadUserByUsername(request.phone)
-
-        val phone: String = userDetails.username
-
-        val user: ClientDto = repository.getUser(phone)
-        val token: String = jwtUtil.generateToken(user)
+        } else {
+            // нужно создать запись в таблице клиент
+            // так же профиль клиента
+            // а так же в таблице истории авторизаций
+            dsl.insertInto(CLIENT)
+                .set(CLIENT.PHONE, phone.phoneNumber)
+                .set(CLIENT.CODE, code)
+                .returningResult(CLIENT.ID)
+                .execute()
+        }
 
 
-        return ResponseEntity<JwtResponse>(JwtResponse(token), HttpStatus.OK)
+
+        return ResponseEntity<JwtResponse>(HttpStatus.OK)
     }
 
-    fun getCodeByPhone(phone: String) {
+    @PostMapping("/signin")
+    fun signup(@RequestBody request: JwtRequest): ResponseEntity<JwtResponse> {
 
+        val userDetails: UserDetails = service.loadUserByUsername(request.phone, request.code)
+        //val user: ClientDto = repository.getUserByPhoneAndCode(userDetails.username, userDetails.password)
+        val client = ClientVo(userDetails.username, userDetails.password)
+
+        return ResponseEntity<JwtResponse>(JwtResponse(jwtUtil.generateToken(client)), HttpStatus.OK)
+    }
+
+
+
+    /**
+     * Отправка смс с кодом на указанный номер
+     */
+    fun sendCodeInMessage(phone: String, code: String) {
+        val request: HttpRequest = HttpRequest.newBuilder()
+            .GET()
+            .uri(URI("https://email:api_key@gate.smsaero.ru/v2/sms/send?number=$phone&text=$code&sign=SMSAero"))
+            .header("accept", "application/json")
+            .header("Authorization", getBasicAuthenticationHeader("abaevevgenchik@gmail.com", "qpMUFeQeec2FQJv-_rYzLAvR1lftEBM5"))
+            .build()
+
+        val client: HttpClient = HttpClient.newHttpClient();
+        val response: HttpResponse<String> = client.send(request, HttpResponse.BodyHandlers.ofString())
+
+        System.out.println(response)
     }
 
     fun getBasicAuthenticationHeader(phone: String, code: String): String {

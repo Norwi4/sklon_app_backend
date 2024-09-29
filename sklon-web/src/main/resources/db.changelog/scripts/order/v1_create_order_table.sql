@@ -10,7 +10,7 @@ CREATE TABLE sklon_rent.order
     data_open DATE DEFAULT NOW(),
     deposit INT NOT NULL,
 
-    FOREIGN KEY	(client_id) REFERENCES sklon_auth.clients(id)
+    FOREIGN KEY	(client_id) REFERENCES sklon_auth.client(id)
 );
 
 

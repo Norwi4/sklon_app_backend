@@ -1,10 +1,16 @@
 package ru.sklon.controller
 
-import org.jooq.DSLContext
+import io.swagger.annotations.SwaggerDefinition
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
+import ru.sklon.RestControllerAuth
+import ru.sklon.TagAuthController
 import ru.sklon.model.PhoneRequest
 import ru.sklon.service.ClientService
 import ru.sklon.utils.JwtUtil
@@ -16,20 +22,22 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.util.*
-import kotlin.random.Random
 
 /**
  *
  * @author Abaev Evgeniy
  */
 
-@RestController
-@RequestMapping()
+@RestControllerAuth
+@Tag(name = "Auth service", description = "Сервис авторизации")
 internal class AuthController(
     private val service: ClientService,
     private val jwtUtil: JwtUtil
 ) {
 
+    /**
+     * Тестовый эндпоинт
+     */
     @GetMapping("/phone")
     fun generateJwtToken(): String {
         return "Все работает"
@@ -38,18 +46,33 @@ internal class AuthController(
     /**
      * Получить одноразовый код по смс
      */
-    @PostMapping("/signup")
-    fun signin(@RequestBody phoneRequest: PhoneRequest): ResponseEntity<JwtResponse> {
-        service.createOrUpdateUser(phoneRequest.phone)
-        return ResponseEntity<JwtResponse>(HttpStatus.OK)
+    @GetMapping("/signup/{phone}")
+    @Operation(
+        summary = "Найти или добавить новый аккаунт по номеру телефона и отправить на " +
+                "указанный телефон смс с одноразовым кодом", responses = [
+            ApiResponse(responseCode = "200")
+        ]
+    )
+    fun signin(
+        @Parameter(description = "Номер телефона (начинается с 7)") @PathVariable("phone") phone: String
+    ): ResponseEntity<HttpStatus> {
+        service.createOrUpdateUser(phone)
+        return ResponseEntity<HttpStatus>(HttpStatus.OK)
     }
 
     /**
      * Авторизация по номеру и одноразовому коду
      */
     @PostMapping("/signin")
-    fun signup(@RequestBody request: JwtRequest): ResponseEntity<JwtResponse> {
-        val userDetails: UserDetails = service.loadUserByUsername(request.phone, request.code)
+    @Operation(
+        summary = "Авторизация по номеру телефона и одноразовому паролю из смс", responses = [
+            ApiResponse(responseCode = "200")
+        ]
+    )
+    fun signup(
+        @Parameter(description = "Форма авторизации") @RequestBody authForm: JwtRequest
+    ): ResponseEntity<JwtResponse> {
+        val userDetails: UserDetails = service.loadUserByUsername(authForm.phone, authForm.code)
         return ResponseEntity<JwtResponse>(
             JwtResponse(
                 jwtUtil.generateToken(

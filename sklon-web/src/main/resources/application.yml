@@ -11,3 +11,4 @@ spring:
   liquibase:
     change-log: classpath:db.changelog/app-changelog.xml
     default-schema: sklon_liquibase
+

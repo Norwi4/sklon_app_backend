@@ -34,8 +34,14 @@ internal class ApiSecurityConfig(
     @Throws(Exception::class)
     override fun configure(web: WebSecurity) {
         web.ignoring().antMatchers(
-            "/signin",
-            "/signup"
+            "/api/**",
+            "/swagger/**",
+            "/swagger-ui/**",
+            "/v2/api-docs/**",
+            "/swagger-ui.html/**",
+            "*/**",
+            "/open-api-docs/**",
+            "/v3/**"
         )
     }
 
@@ -47,7 +53,8 @@ internal class ApiSecurityConfig(
     override fun configure(http: HttpSecurity) {
         http.csrf().disable()
             .authorizeRequests()
-            .antMatchers("/signin", "/signup").permitAll()
+            .antMatchers("/signin", "/signup", "/swagger/**", "/swagger-ui/**",
+                "/v2/api-docs/**", "/swagger-ui.html/**", "*/**", "/open-api-docs/**", "/v3/**").permitAll()
             .anyRequest().authenticated()
             .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
             .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

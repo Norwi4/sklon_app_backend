@@ -38,7 +38,7 @@ internal class AuthController(
 ) {
 
     /**
-     * Тестовый эндпоинт
+     * Тестовый эндпоинт skldjfhlasidfjnb
      */
     @GetMapping("/phone")
     fun generateJwtToken(): String {

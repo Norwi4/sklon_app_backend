@@ -1,5 +1,6 @@
 package ru.sklon.filter
 
+import org.jooq.meta.derby.sys.Sys
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
@@ -42,11 +43,15 @@ internal class JwtAuthenticationFilter(
 
         val userDetails: UserDetails = service.loadUserByUsername(user!!.phone, user.code)
 
-        val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
-        usernamePasswordAuthenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request)
+        val usernamePasswordAuthenticationToken: UsernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities())
+        usernamePasswordAuthenticationToken.setDetails( WebAuthenticationDetailsSource().buildDetails(request))
 
-        if (SecurityContextHolder.getContext().authentication == null) {
-            SecurityContextHolder.getContext().authentication = usernamePasswordAuthenticationToken
+        val se = SecurityContextHolder.getContext().getAuthentication()
+        System.out.println(se)
+
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            val sec = SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken)
+            var f = 0;
         }
         filterChain.doFilter(request, response)
     }

@@ -25,6 +25,8 @@ internal class JwtUtil {
     fun getUser(token: String): ClientVo? {
         return try {
             val body: Claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).body
+            val cod = body.subject
+
             val user = ClientVo(body.subject, body["code"].toString())
             return user
         } catch (e: Exception) {

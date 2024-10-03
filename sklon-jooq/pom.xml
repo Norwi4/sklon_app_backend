@@ -126,11 +126,11 @@
                 </property>
             </activation>
             <properties>
-                <DB_HOST>localhost</DB_HOST>
-                <DB_PORT>5432</DB_PORT>
-                <DB_DATABASE>sklon</DB_DATABASE>
-                <DB_USERNAME>postgres</DB_USERNAME>
-                <DB_PASSWORD>postgres</DB_PASSWORD>
+                <DB_HOST>rc1a-73lxg215z7ep4vxf.mdb.yandexcloud.net,rc1b-7xfmxrgl17kcsd0p.mdb.yandexcloud.net,rc1b-z421ltjhqjuwwlwq.mdb.yandexcloud.net</DB_HOST>
+                <DB_PORT>6432</DB_PORT>
+                <DB_DATABASE>db1</DB_DATABASE>
+                <DB_USERNAME>postgres1</DB_USERNAME>
+                <DB_PASSWORD>postgres1</DB_PASSWORD>
             </properties>
         </profile>
     </profiles>

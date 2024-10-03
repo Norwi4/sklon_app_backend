@@ -61,10 +61,10 @@ jobs:
           
           # Добавление известного хоста
           mkdir -p ~/.ssh
-          ssh-keyscan -H 51.250.101.151 >> ~/.ssh/known_hosts
+          ssh-keyscan -H 84.201.168.194 >> ~/.ssh/known_hosts
 
           # Остановка и удаление старого приложения (если оно запущено)
-          ssh -i ssh_key eabaev@51.250.101.151 << 'EOF'
+          ssh -i ssh_key paw@84.201.168.194 << 'EOF'
             sudo -i
             # Проверяем, есть ли процессы на порту 8080
             PIDS=$(sudo lsof -t -iTCP:8080 -sTCP:LISTEN)
@@ -76,18 +76,19 @@ jobs:
             fi
             
             echo "Removing old application..."
-            sudo rm -rf /home/eabaev/myapp/sklon-web-0.0.1-SNAPSHOT.jar || true  # Удаление старого JAR файла
+            sudo rm -rf /home/paw/myapp/sklon-web-0.0.1-SNAPSHOT.jar || true  # Удаление старого JAR файла
           EOF
 
           # Копирование нового приложения и запуск его в фоновом режиме
-          scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar eabaev@51.250.101.151:/home/eabaev/myapp/
-          ssh -i ssh_key eabaev@51.250.101.151 'sudo nohup java -jar /home/eabaev/myapp/sklon-web-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &'
+          mkdir /home/paw/myapp/
+          scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar paw@84.201.168.194:/home/paw/myapp/
+          ssh -i ssh_key paw@84.201.168.194 'sudo nohup java -jar /home/paw/myapp/sklon-web-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &'
 
           sleep 10  # Ждем некоторое время, чтобы приложение успело запуститься
 
           # Проверка состояния приложения
           for i in {1..2}; do  # Проверяем 10 раз с интервалом в 5 секунд
-            if curl --silent --fail http://51.250.101.151:8080/objects; then 
+            if curl --silent --fail http://84.201.168.194:8080/objects; then 
               echo "Application is up and running!"
               exit 0  # Успех, завершаем выполнение скрипта с кодом 0
             fi

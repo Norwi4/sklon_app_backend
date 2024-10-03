@@ -3,7 +3,7 @@ spring:
     init:
       mode: always
   datasource:
-    url: jdbc:postgresql://rc1a-73lxg215z7ep4vxf.mdb.yandexcloud.net:6432,rc1b-7xfmxrgl17kcsd0p.mdb.yandexcloud.net:6432,rc1b-z421ltjhqjuwwlwq.mdb.yandexcloud.net:6432/db1
+    url: jdbc:postgresql://rc1a-73lxg215z7ep4vxf.mdb.yandexcloud.net:6432/db1
     username: postgres1
     password: postgres1
     driver-class-name: org.postgresql.Driver

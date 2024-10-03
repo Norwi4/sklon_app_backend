@@ -80,7 +80,6 @@ jobs:
           EOF
 
           # Копирование нового приложения и запуск его в фоновом режиме
-          mkdir /home/paw/myapp/
           scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar paw@84.201.168.194:/home/paw/myapp/
           ssh -i ssh_key paw@84.201.168.194 'sudo nohup java -jar /home/paw/myapp/sklon-web-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &'
 

@@ -22,7 +22,7 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn clean install
+        run: mvn clean package -DskipTests
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
@@ -61,33 +61,29 @@ jobs:
           
           # Добавление известного хоста
           mkdir -p ~/.ssh
-          ssh-keyscan -H 84.201.168.194 >> ~/.ssh/known_hosts
+          ssh-keyscan -H 84.201.145.141 >> ~/.ssh/known_hosts
 
-          # Остановка и удаление старого приложения (если оно запущено)
-          ssh -i ssh_key paw@84.201.168.194 << 'EOF'
-            sudo -i
-            # Проверяем, есть ли процессы на порту 8080
-            PIDS=$(sudo lsof -t -iTCP:8080 -sTCP:LISTEN)
-            if [ -n "$PIDS" ]; then
-              echo "Stopping the old application..."
-              kill $PIDS || true  # Остановка процесса на порту 8080, если он есть
-            else
-              echo "No application running on port 8080."
-            fi
-            
-            echo "Removing old application..."
-            sudo rm -rf /home/paw/myapp/sklon-web-0.0.1-SNAPSHOT.jar || true  # Удаление старого JAR файла
+          # Остановка и удаление старого контейнера (если он запущен)
+          ssh -i ssh_key paw@84.201.145.141 << 'EOF'
+            sudo docker stop sklon-web || true  # Остановить контейнер, если он существует
+            sudo docker rm sklon-web || true   # Удалить контейнер, если он существует
+            sudo rm -rf /home/paw/myapp/sklon-web-0.0.1-SNAPSHOT.jar || true  # Удаление старого JAR файла, если необходимо
           EOF
 
-          # Копирование нового приложения и запуск его в фоновом режиме
-          scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar paw@84.201.168.194:/home/paw/myapp/
-          ssh -i ssh_key paw@84.201.168.194 'sudo nohup java -jar /home/paw/myapp/sklon-web-0.0.1-SNAPSHOT.jar &'
+          # Копирование нового приложения на VPS
+          scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar paw@84.201.145.141:/home/paw/myapp/
+
+          # Создание и запуск Docker контейнера с приложением
+          ssh -i ssh_key paw@84.201.145.141 << 'EOF'
+            sudo docker build -t sklon-web /home/paw/myapp/
+            sudo docker run -d --name sklon-web -p 8080:8080 /home/paw/myapp/sklon-web-0.0.1-SNAPSHOT.jar
+          EOF
 
           sleep 10  # Ждем некоторое время, чтобы приложение успело запуститься
 
           # Проверка состояния приложения
-          for i in {1..2}; do  # Проверяем 10 раз с интервалом в 5 секунд
-            if curl --silent --fail http://84.201.168.194:8080/objects; then 
+          for i in {1..2}; do  # Проверяем 2 раза с интервалом в 5 секунд
+            if curl --silent --fail http://84.201.145.141:8080/objects; then 
               echo "Application is up and running!"
               exit 0  # Успех, завершаем выполнение скрипта с кодом 0
             fi

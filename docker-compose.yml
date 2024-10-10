@@ -8,11 +8,6 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/sklon_db
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
-
-
-
-
-
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://rc1a-73lxg215z7ep4vxf.mdb.yandexcloud.net:6432/db1
+      - SPRING_DATASOURCE_USERNAME=postgres1
+      - SPRING_DATASOURCE_PASSWORD=postgres1

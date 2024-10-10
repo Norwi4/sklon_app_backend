@@ -63,13 +63,6 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H 84.201.145.141 >> ~/.ssh/known_hosts
 
-          # Остановка и удаление старого контейнера (если он запущен)
-          ssh -i ssh_key paw@84.201.145.141 << 'EOF'
-            sudo docker stop sklon-web || true  # Остановить контейнер, если он существует
-            sudo docker rm sklon-web || true   # Удалить контейнер, если он существует
-            sudo rm -rf /home/paw/sklon-web-0.0.1-SNAPSHOT.jar || true  # Удаление старого JAR файла, если необходимо
-          EOF
-
           # Копирование нового приложения на VPS
           scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar paw@84.201.145.141:/home/paw/
 
@@ -82,6 +75,13 @@ jobs:
             # Создание и запуск Docker контейнера с приложением
             sudo docker build -t sklon-web /home/paw/
             sudo docker run -d --name sklon-web -p 8080:8080 sklon-web
+          EOF
+          
+          # Остановка и удаление старого контейнера (если он запущен)
+            ssh -i ssh_key paw@84.201.145.141 << 'EOF'
+            sudo docker stop sklon-web || true  # Остановить контейнер, если он существует
+            sudo docker rm sklon-web || true   # Удалить контейнер, если он существует
+            sudo rm -rf /home/paw/sklon-web-0.0.1-SNAPSHOT.jar || true  # Удаление старого JAR файла, если необходимо
           EOF
 
           sleep 10  # Ждем некоторое время, чтобы приложение успело запуститься

@@ -68,9 +68,12 @@ jobs:
 
           # Создание Dockerfile для приложения
           ssh -i ssh_key paw@84.201.145.141 << 'EOF'
-            echo "FROM openjdk:11-jre-slim" > /home/paw/Dockerfile
-            echo "COPY sklon-web-0.0.1-SNAPSHOT.jar /app.jar" >> /home/paw/Dockerfile
-            echo "ENTRYPOINT [\"java\", \"-jar\", \"/app.jar\"]" >> /home/paw/Dockerfile
+            echo "FROM openjdk:11 as build" >> /home/paw/Dockerfile
+            echo "VOLUME /opt" >> /home/paw/Dockerfile
+            echo "EXPOSE 8080" >> /home/paw/Dockerfile
+            echo "ARG JAR_FILE=target/sklon-web-0.0.1-SNAPSHOT.jar" >> /home/paw/Dockerfile
+            echo "ADD ${JAR_FILE} backend.jar" >> /home/paw/Dockerfile
+            echo "ENTRYPOINT ["java","-jar","/backend.jar"]" >> /home/paw/Dockerfile
           
             # Создание и запуск Docker контейнера с приложением
             sudo docker build -t sklon-web /home/paw/

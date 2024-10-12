@@ -50,6 +50,14 @@ jobs:
 
         run: |
           # Установка Yandex Cloud CLI
+          #if [ ! -d "/yandex-cloud/bin" ]; then
+            # Если директория не существует, выполняем установку
+          #  curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+          #  export PATH=$PATH:$HOME/yandex-cloud/bin
+          #else
+          #  echo "Директория /yandex-cloud/bin уже существует."
+          #fi
+          
           curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
           export PATH=$PATH:$HOME/yandex-cloud/bin
           
@@ -66,18 +74,9 @@ jobs:
           # Копирование нового приложения на VPS
           scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar paw@84.201.145.141:/home/paw/
 
-          # Создание Dockerfile для приложения
-          ssh -i ssh_key paw@84.201.145.141 << 'EOF'
-            echo "FROM openjdk:11 as build" >> /home/paw/Dockerfile
-            echo "VOLUME /opt" >> /home/paw/Dockerfile
-            echo "EXPOSE 8080" >> /home/paw/Dockerfile
-            echo "ARG JAR_FILE=target/sklon-web-0.0.1-SNAPSHOT.jar" >> /home/paw/Dockerfile
-            echo "COPY ${JAR_FILE} backend.jar" >> /home/paw/Dockerfile
-            echo "ENTRYPOINT ["java","-jar","/backend.jar"]" >> /home/paw/Dockerfile
-          
-            # Создание и запуск Docker контейнера с приложением
-            sudo docker build -t sklon-web /home/paw/
-            sudo docker run -d --name sklon-web -p 8080:8080 sklon-web
+          # Создание и запуск Docker контейнера с приложением
+          sudo docker build -t sklon-web /home/paw/
+          sudo docker run -d --name sklon-web -p 8080:8080 sklon-web
           EOF
 
           sleep 10  # Ждем некоторое время, чтобы приложение успело запуститься

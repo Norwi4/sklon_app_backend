@@ -72,7 +72,9 @@ jobs:
           ssh-keyscan -H 51.250.39.211 >> ~/.ssh/known_hosts
 
           # Копирование нового приложения на VPS
-          scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar paw@51.250.39.211:/home/paw/sklon
+          scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar paw@51.250.39.211:~/
+          
+          cd /home/paw/sklon
 
           # Создание и запуск Docker контейнера с приложением
           sudo docker build -t sklon-web /home/paw/sklon

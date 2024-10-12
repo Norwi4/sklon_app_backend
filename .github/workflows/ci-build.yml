@@ -69,10 +69,10 @@ jobs:
           
           # Добавление известного хоста
           mkdir -p ~/.ssh
-          ssh-keyscan -H 84.201.145.141 >> ~/.ssh/known_hosts
+          ssh-keyscan -H 51.250.39.211 >> ~/.ssh/known_hosts
 
           # Копирование нового приложения на VPS
-          scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar paw@84.201.145.141:/home/paw/
+          scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar paw@51.250.39.211:/home/paw/
 
           # Создание и запуск Docker контейнера с приложением
           sudo docker build -t sklon-web /home/paw/
@@ -83,7 +83,7 @@ jobs:
 
           # Проверка состояния приложения
           for i in {1..2}; do  # Проверяем 2 раза с интервалом в 5 секунд
-            if curl --silent --fail http://84.201.145.141:8080/objects; then 
+            if curl --silent --fail http://51.250.39.211:8080/objects; then 
               echo "Application is up and running!"
               exit 0  # Успех, завершаем выполнение скрипта с кодом 0
             fi

@@ -58,18 +58,18 @@ jobs:
           #  echo "Директория /yandex-cloud/bin уже существует."
           #fi
           
-          #curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
-          #export PATH=$PATH:$HOME/yandex-cloud/bin
+          curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+          export PATH=$PATH:$HOME/yandex-cloud/bin
           
-          #echo "$YC_SA_JSON_CREDENTIALS" > yc-sa-key.json
-          #yc config set service-account-key yc-sa-key.json
+          echo "$YC_SA_JSON_CREDENTIALS" > yc-sa-key.json
+          yc config set service-account-key yc-sa-key.json
           
-          #echo "$SSH_PRIVATE_KEY" > ssh_key
-          #chmod 600 ssh_key
+          echo "$SSH_PRIVATE_KEY" > ssh_key
+          chmod 600 ssh_key
           
           # Добавление известного хоста
-          #mkdir -p ~/.ssh
-          #ssh-keyscan -H 51.250.39.211 >> ~/.ssh/known_hosts
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 51.250.39.211 >> ~/.ssh/known_hosts
 
           # Копирование нового приложения на VPS
           scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar paw@51.250.39.211:~/

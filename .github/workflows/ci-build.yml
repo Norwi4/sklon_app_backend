@@ -50,14 +50,6 @@ jobs:
 
         run: |
           # Установка Yandex Cloud CLI
-          #if [ ! -d "/yandex-cloud/bin" ]; then
-            # Если директория не существует, выполняем установку
-          #  curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
-          #  export PATH=$PATH:$HOME/yandex-cloud/bin
-          #else
-          #  echo "Директория /yandex-cloud/bin уже существует."
-          #fi
-          
           curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
           export PATH=$PATH:$HOME/yandex-cloud/bin
           
@@ -74,10 +66,9 @@ jobs:
           # Копирование нового приложения на VPS
           scp -i ssh_key ./sklon-web-0.0.1-SNAPSHOT.jar paw@51.250.39.211:~/
           
-          cd /home/paw/sklon
-
           # Создание и запуск Docker контейнера с приложением
-          sudo docker build -t sklon-web /home/paw/sklon
+          ssh -i ssh_key paw@51.250.39.211 << 'EOF'
+            sudo docker build -t sklon-web /home/paw/sklon
           sudo docker run --log-driver json-file --log-opt max-size=10m --log-opt max-file=3 -d --name sklon-web -p 8080:8080 sklon-web
           EOF
 
